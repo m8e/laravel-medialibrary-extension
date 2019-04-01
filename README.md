@@ -23,7 +23,12 @@ This package follows the `spatie/laravel-medialibrary` versioning scheme.
 
 ## Extra features
 
-### Mime types constraint
+- [Mime types constraint](mime-types-constraint)
+- [Collection validation string](collection-validation-string)
+- [Collection legend](collection-legend)
+- [Extra public methods](extra-public-methods)
+
+#### Mime types constraint
 Addition of the `acceptsMimeTypes(array $mimeTypes): MediaCollection` which can be used with a media collection.  
 Once declared, the mime types constraints will be used to trigger the `FileUnacceptableForCollection` exception if not respected, and also used to generate validation constraints and legends (see bellow).
 ```php
@@ -36,7 +41,7 @@ public function registerMediaCollections()
 }
 ```
 
-### Collection validation string
+#### Collection validation string
 Addition of the `validationConstraints(string $collectionName): string` method, which can be used with a model using the `HasMediaTrait`.  
 ```php
 // in your user storing form request for example
@@ -50,7 +55,7 @@ public function rules()
 ```
 Rendering example : `dimensions:min_width=60,min_height=20|mimetypes:image/jpeg,image/png`.
 
-### Collection legend
+#### Collection legend
 Addition of the `constraintsLegend(string $collectionName): string` method, which can be used with a model using the `HasMediaTrait`.
 ```html
 // in your HTML form
@@ -60,7 +65,7 @@ Addition of the `constraintsLegend(string $collectionName): string` method, whic
 ```
 Rendering example : `Min. width : 150 px / Min. height : 70 px. Accepted MIME Type(s) : image/jpeg, image/png.`
 
-### Other public methods
+#### Extra public methods
 The following methods can also be used separately on a model using the `HasMediaTrait` :
 - `collectionDimensionsLegend($collectionName): string`
 - `collectionMimeTypesLegend($collectionName): string`
