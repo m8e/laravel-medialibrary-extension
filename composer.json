@@ -1,0 +1,68 @@
+{
+    "name": "okipa/laravel-medialibrary-extension",
+    "description": "Extra features for https://github.com/spatie/laravel-medialibrary package.",
+    "keywords": [
+        "okipa",
+        "laravel-medialibrary-extension",
+        "laravel-medialibrary",
+        "laravel",
+        "media",
+        "library",
+        "package"
+    ],
+    "homepage": "https://github.com/okipa/laravel-medialibrary-extension",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Arthur LORENT",
+            "email": "arthur.lorent@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "illuminate/support": "5.8.*",
+        "nunomaduro/larastan": "^0.3.16",
+        "phpmd/phpmd": "^2.6",
+        "spatie/laravel-medialibrary": "^7.0.0",
+        "squizlabs/php_codesniffer": "^3.4"
+    },
+    "require-dev": {
+        "orchestra/testbench": "3.8.*",
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Okipa\\MediaLibraryExtension\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Okipa\\MediaLibraryExtension\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpcbf",
+            "vendor/bin/phpcs",
+            "vendor/bin/phpmd src text phpmd.xml",
+            "vendor/bin/phpstan analyse",
+            "phpunit"
+        ],
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Okipa\\MediaLibraryExtension\\MediaLibraryExtensionServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
