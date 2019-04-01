@@ -27,11 +27,12 @@ This package follows the `spatie/laravel-medialibrary` versioning scheme.
 Addition of the `acceptsMimeTypes(array $mimeTypes): MediaCollection` which can be used with a media collection.  
 Once declared, the mime types constraints will be used to trigger the `FileUnacceptableForCollection` exception if not respected, and also used to generate validation constraints and legends (see bellow).
 ```php
+// example
 public function registerMediaCollections()
 {
     $this->addMediaCollection('images')->acceptsFile(function (File $file) {
         return $file->size <= 30000;
-    })->acceptsMimeTypes(['image/jpeg']);
+    })->acceptsMimeTypes(['image/jpeg', 'image/png']);
 }
 ```
 
@@ -43,7 +44,7 @@ public function rules()
 {
     return [
         'avatar' => (new User)->validationConstraints('avatar'),
-        // other validation rules
+        // your other validation rules
     ];
 }
 ```
