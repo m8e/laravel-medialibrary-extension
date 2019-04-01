@@ -1,7 +1,5 @@
 # Changelog
 
-All notable changes to `laravel-medialibrary-extension` will be documented in this file
-
-## 1.0.0 - 201X-XX-XX
+## 0.0.1 - 2019-04-01
 
 - initial release

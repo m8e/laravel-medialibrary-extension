@@ -9,8 +9,8 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/?branch=master)
 
-This package extra features for the [laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) package.  
-Find the base features documentation here : https://docs.spatie.be/laravel-medialibrary/v7.  
+This package provide extra features for the [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) package.  
+Find the base package documentation here : https://docs.spatie.be/laravel-medialibrary/v7.  
 
 ## Installation
 
@@ -20,10 +20,10 @@ You can install the package via composer :
 composer require okipa/laravel-medialibrary-extension:^7.0.0
 ```
 
-The extension package will automatically install the [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) if it has not already been installed on your project.
+The extension package will automatically install the [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) if it has not already been installed on your project.  
 This extension package will follow the `spatie` base package versions.
 
-## Usage
+## Extra features
 
 ### Mime types constraint
 Addition of the `acceptsMimeTypes(array $mimeTypes): MediaCollection` which can be used with a media collection.  
@@ -80,10 +80,6 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security
-
-If you discover any security related issues, please email arthur.lorent@gmail.com instead of using the issue tracker.
 
 ## Credits
 
