@@ -12,6 +12,8 @@
 This package provide extra features for the [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) package.  
 Find the base package documentation here : https://docs.spatie.be/laravel-medialibrary/v7.  
 
+:warning: **PACKAGE IN DEVELOPMENT** :warning:	
+
 ## Installation
 
 You can install the package via composer :
