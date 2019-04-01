@@ -15,13 +15,11 @@ Find the base package documentation here : https://docs.spatie.be/laravel-medial
 ## Installation
 
 You can install the package via composer :
-
 ```bash
 composer require okipa/laravel-medialibrary-extension:^7.0.0
 ```
-
 The extension package will automatically install the [spatie/laravel-medialibrary](https://github.com/spatie/laravel-medialibrary) if it has not already been installed on your project.  
-This extension package will follow the `spatie` base package versions.
+This package follows the `spatie/laravel-medialibrary` versioning scheme.
 
 ## Extra features
 
