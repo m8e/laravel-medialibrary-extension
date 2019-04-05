@@ -69,7 +69,7 @@ abstract class TestCase extends Orchestra
         if (File::isDirectory($directory)) {
             File::deleteDirectory($directory);
         }
-        File::makeDirectory($directory);
+        File::makeDirectory($directory, 0777, true, true);
     }
 
     protected function setUpTempTestFiles()

@@ -190,4 +190,33 @@ class CollectionMaxSizeTest extends TestCase
         $this->assertEquals(100, $maxSizes['width']);
         $this->assertEquals(80, $maxSizes['height']);
     }
+
+    /**
+     * @test
+     */
+    public function itReturnsEmptyArrayWhenNoImageDeclared()
+    {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')
+                    ->acceptsFile(function (File $file) {
+                        return true;
+                    })
+                    ->acceptsMimeTypes(['application/pdf'])
+                    ->registerMediaConversions(function (Media $media = null) {
+                        $this->addMediaConversion('admin-panel')
+                            ->crop(Manipulations::CROP_CENTER, 20, 80);
+                    });
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 100, 70);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
+        $this->assertEquals([], $maxSizes);
+    }
 }

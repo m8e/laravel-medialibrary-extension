@@ -9,7 +9,7 @@ use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
 use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
-class CollectionLegendTest extends TestCase
+class ConstraintsLegendTest extends TestCase
 {
     /**
      * @test
@@ -108,6 +108,29 @@ class CollectionLegendTest extends TestCase
         $legendString = $testModel->constraintsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.mimeTypes', [
             'mimetypes' => 'image/jpeg, image/png',
+        ]), $legendString);
+    }
+
+    /**
+     * @test
+     */
+    public function itReturnsOnlyMimeTypesLegendWhenNoImageDeclared()
+    {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['application/pdf']);;
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
+        $legendString = $testModel->constraintsLegend('logo');
+        $this->assertEquals(__('medialibrary::medialibrary.constraint.mimeTypes', [
+            'mimetypes' => 'application/pdf',
         ]), $legendString);
     }
 }
