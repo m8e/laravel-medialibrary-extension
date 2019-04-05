@@ -48,10 +48,8 @@
             "vendor/bin/phpcs",
             "vendor/bin/phpmd src text phpmd.xml",
             "vendor/bin/phpstan analyse",
-            "phpunit"
-        ],
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
+            "vendor/bin/phpunit"
+        ]
     },
     "extra": {
         "laravel": {

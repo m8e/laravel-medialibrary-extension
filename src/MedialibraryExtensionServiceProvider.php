@@ -3,6 +3,7 @@
 namespace Okipa\MediaLibraryExtension;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class MediaLibraryExtensionServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,7 @@ class MediaLibraryExtensionServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/lang' => resource_path('lang'),
         ], 'translations');
-        $this->app->register(\Spatie\MediaLibrary\MediaLibraryServiceProvider::class);
+        $this->app->register(MediaLibraryServiceProvider::class);
     }
 
     /**
