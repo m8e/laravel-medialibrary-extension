@@ -24,10 +24,10 @@ This package follows the `spatie/laravel-medialibrary` versioning scheme.
 
 ## Extra features
 
-- [Mime types constraint](mime-types-constraint)
-- [Collection validation string](collection-validation-string)
-- [Collection legend](collection-legend)
-- [Extra public methods](extra-public-methods)
+- [Mime types constraint](#mime-types-constraint)
+- [Collection validation string](#collection-validation-string)
+- [Collection legend](#collection-legend)
+- [Extra public methods](#extra-public-methods)
 
 #### Mime types constraint
 Addition of the `acceptsMimeTypes(array $mimeTypes): MediaCollection` which can be used with a media collection.  
