@@ -89,7 +89,7 @@ trait HasMediaExtensionTrait
     /**
      * @param \Spatie\MediaLibrary\Models\Media|null $media
      */
-    public abstract function registerAllMediaConversions(Media $media = null);
+    abstract public function registerAllMediaConversions(Media $media = null);
 
     /**
      * Get a media collection object from its name.
@@ -180,7 +180,7 @@ trait HasMediaExtensionTrait
         return $validationString;
     }
 
-    public abstract function registerMediaCollections();
+    abstract public function registerMediaCollections();
 
     /**
      * Get the constraints legend string for a media collection.

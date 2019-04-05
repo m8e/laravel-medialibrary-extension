@@ -9,7 +9,7 @@ use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
-class mimeTypesLegendTest extends TestCase
+class MimeTypesLegendTest extends TestCase
 {
     /**
      * @test

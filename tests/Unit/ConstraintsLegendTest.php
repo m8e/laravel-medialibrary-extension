@@ -120,7 +120,8 @@ class ConstraintsLegendTest extends TestCase
         {
             public function registerMediaCollections()
             {
-                $this->addMediaCollection('logo')->acceptsMimeTypes(['application/pdf']);;
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['application/pdf']);
+                ;
             }
 
             public function registerMediaConversions(Media $media = null)
