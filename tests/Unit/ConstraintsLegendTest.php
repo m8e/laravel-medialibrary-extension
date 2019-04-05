@@ -2,12 +2,12 @@
 
 namespace Okipa\MediaLibraryExtension\Tests\Unit\UrlGenerator;
 
-use Spatie\Image\Manipulations;
-use Spatie\MediaLibrary\Models\Media;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
 use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\Models\Media;
 
 class ConstraintsLegendTest extends TestCase
 {

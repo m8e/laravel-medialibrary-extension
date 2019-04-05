@@ -4,7 +4,6 @@
 [![Latest Version](https://img.shields.io/packagist/v/okipa/laravel-medialibrary-extension.svg?style=flat-square)](https://packagist.org/packages/okipa/laravel-medialibrary-extension)
 [![Total Downloads](https://img.shields.io/packagist/dt/okipa/laravel-medialibrary-extension.svg?style=flat-square)](https://packagist.org/packages/okipa/laravel-medialibrary-extension)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![StyleCI](https://styleci.io/repos/178888702/shield)](https://styleci.io/repos/178888702)
 [![Build Status](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Okipa/laravel-medialibrary-extension/?branch=master)
