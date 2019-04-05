@@ -2,15 +2,13 @@
 
 namespace Okipa\MediaLibraryExtension\Tests\Unit\UrlGenerator;
 
+use Spatie\MediaLibrary\File;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\Models\Media;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithCollectionWithoutConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalAndCollectionConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithNoSize;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithOnlyHeight;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithOnlyWidth;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
 class CollectionDimensionLegendTest extends TestCase
 {
@@ -19,10 +17,15 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentCollection()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
         $this->expectException(CollectionNotFound::class);
-        $this->expectExceptionMessage('No collection `logo` declared in the Okipa\MediaLibraryExtension\Tests\Support'
-            . '\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection-model');
-        (new TestModelWithGlobalConversionOnlyWithoutCollection)->collectionDimensionsLegend('logo');
+        $testModel->dimensionsLegend('logo');
     }
 
     /**
@@ -30,10 +33,15 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentConversions()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+        };
         $this->expectException(ConversionsNotFound::class);
-        $this->expectExceptionMessage('No conversion declared in the Okipa\MedialibraryExtension\Tests\Support'
-            . '\TestModels\TestModelWithCollectionWithoutConversions-model');
-        (new TestModelWithCollectionWithoutConversions)->collectionDimensionsLegend('logo');
+        $testModel->dimensionsLegend('logo');
     }
 
     /**
@@ -41,7 +49,19 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itReturnsOnlyWidthDimensionLegendWhenOnlyWidthIsDeclared()
     {
-        $dimensionsLegendString = (new TestModelWithGlobalConversionWithOnlyWidth)->collectionDimensionsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->width(120);
+            }
+        };
+        $dimensionsLegendString = $testModel->dimensionsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.dimensions.width', [
             'width' => 120,
         ]), $dimensionsLegendString);
@@ -52,7 +72,19 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itReturnsOnlyHeightDimensionLegendWhenOnlyHeightIsDeclared()
     {
-        $dimensionsLegendString = (new TestModelWithGlobalConversionWithOnlyHeight)->collectionDimensionsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->height(30);
+            }
+        };
+        $dimensionsLegendString = $testModel->dimensionsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.dimensions.height', [
             'height' => 30,
         ]), $dimensionsLegendString);
@@ -63,7 +95,19 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itReturnsNoDimensionLegendWhenNoSizeIsDeclared()
     {
-        $dimensionsLegendString = (new TestModelWithGlobalConversionWithNoSize)->collectionDimensionsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $dimensionsLegendString = $testModel->dimensionsLegend('logo');
         $this->assertEquals('', $dimensionsLegendString);
     }
 
@@ -72,10 +116,59 @@ class CollectionDimensionLegendTest extends TestCase
      */
     public function itReturnsWidthAndHeightDimensionLegendWhenBothAreDeclared()
     {
-        $dimensionsLegendString = (new TestModelWithGlobalAndCollectionConversions)->collectionDimensionsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')
+                    ->acceptsFile(function (File $file) {
+                        return true;
+                    })
+                    ->acceptsMimeTypes(['image/jpeg', 'image/png'])
+                    ->registerMediaConversions(function (Media $media = null) {
+                        $this->addMediaConversion('admin-panel')
+                            ->crop(Manipulations::CROP_CENTER, 20, 80);
+                    });
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 100, 70);
+            }
+        };
+        $dimensionsLegendString = $testModel->dimensionsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.dimensions.both', [
             'width'  => 100,
             'height' => 80,
         ]), $dimensionsLegendString);
+    }
+
+    /**
+     * @test
+     */
+    public function itDoesNotReturnsDimensionsLegendWhenNoImageDeclared()
+    {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')
+                    ->acceptsFile(function (File $file) {
+                        return true;
+                    })
+                    ->acceptsMimeTypes(['application/pdf'])
+                    ->registerMediaConversions(function (Media $media = null) {
+                        $this->addMediaConversion('admin-panel')
+                            ->crop(Manipulations::CROP_CENTER, 20, 80);
+                    });
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 100, 70);
+            }
+        };
+        $dimensionsLegendString = $testModel->dimensionsLegend('logo');
+        $this->assertEquals('', $dimensionsLegendString);
     }
 }

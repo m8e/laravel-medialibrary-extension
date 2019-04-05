@@ -2,10 +2,10 @@
 
 namespace Okipa\MedialibraryExtension\Tests\Feature\FileAdder\MediaConversions;
 
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithConversion;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileUnacceptableForCollection;
 use Spatie\MediaLibrary\File;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithConversion;
+use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileUnacceptableForCollection;
 
 class MediaCollectionTest extends TestCase
 {

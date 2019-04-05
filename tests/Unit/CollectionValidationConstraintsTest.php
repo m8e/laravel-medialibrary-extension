@@ -2,14 +2,12 @@
 
 namespace Okipa\MediaLibraryExtension\Tests\Unit\UrlGenerator;
 
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\Models\Media;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithCollectionWithoutConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnly;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithNoSize;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\testModelWithGlobalConversionWithNoSizeAndNoMimeTypes;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
 class CollectionValidationConstraintsTest extends TestCase
 {
@@ -18,10 +16,15 @@ class CollectionValidationConstraintsTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentCollection()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
         $this->expectException(CollectionNotFound::class);
-        $this->expectExceptionMessage('No collection `logo` declared in the Okipa\MediaLibraryExtension\Tests'
-            . '\Support\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection-model');
-        (new TestModelWithGlobalConversionOnlyWithoutCollection)->validationConstraints('logo');
+        $testModel->validationConstraints('logo');
     }
 
     /**
@@ -29,10 +32,15 @@ class CollectionValidationConstraintsTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentConversions()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+        };
         $this->expectException(ConversionsNotFound::class);
-        $this->expectExceptionMessage('No conversion declared in the Okipa\MedialibraryExtension\Tests'
-            . '\Support\TestModels\TestModelWithCollectionWithoutConversions-model');
-        (new TestModelWithCollectionWithoutConversions)->validationConstraints('logo');
+        $testModel->validationConstraints('logo');
     }
 
     /**
@@ -40,8 +48,19 @@ class CollectionValidationConstraintsTest extends TestCase
      */
     public function itReturnsNoValidationConstraintWhenNoneIsDeclared()
     {
-        $validationConstraintsString =
-            (new TestModelWithGlobalConversionWithNoSizeAndNoMimeTypes)->validationConstraints('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo');
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $validationConstraintsString = $testModel->validationConstraints('logo');
         $this->assertEquals('', $validationConstraintsString);
     }
 
@@ -50,8 +69,19 @@ class CollectionValidationConstraintsTest extends TestCase
      */
     public function itReturnsOnlyDimensionValidationConstraintsWhenOnlyDimensionsDeclared()
     {
-        $validationConstraintsString = (new TestModelWithGlobalConversionOnly)
-            ->validationConstraints('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo');
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
+        $validationConstraintsString = $testModel->validationConstraints('logo');
         $this->assertEquals('dimensions:min_width=60,min_height=20', $validationConstraintsString);
     }
 
@@ -60,8 +90,19 @@ class CollectionValidationConstraintsTest extends TestCase
      */
     public function itReturnsOnlyMimeTypesValidationConstraintsWhenOnlyMimeTypesDeclared()
     {
-        $validationConstraintsString = (new TestModelWithGlobalConversionWithNoSize)
-            ->validationConstraints('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $validationConstraintsString = $testModel->validationConstraints('logo');
         $this->assertEquals('mimetypes:image/jpeg,image/png', $validationConstraintsString);
     }
 }

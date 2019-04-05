@@ -68,10 +68,15 @@ Addition of the `constraintsLegend(string $collectionName): string` method, whic
 Rendering example : `Min. width : 150 px / Min. height : 70 px. Accepted MIME Type(s) : image/jpeg, image/png.`
 
 #### Extra public methods
-The following methods can also be used separately on a model using the `HasMediaTrait` :
-- `collectionDimensionsLegend($collectionName): string`
-- `collectionMimeTypesLegend($collectionName): string`
-- `collectionMaxSizes(string $collectionName = 'default'): array`
+The following methods can also be used separately with a model using the `HasMediaTrait` :
+- `dimensionValidationConstraints(string $collectionName): string` : Get a collection dimension validation constraints string from its name.
+- `mimeTypesValidationConstraints(string $collectionName): string` : Get a collection mime types constraints validation string from its name.
+- `dimensionsLegend($collectionName): string` : Get a collection dimensions constraints legend string from its name.
+- `mimeTypesLegend($collectionName): string` : Get a collection mime types constraints legend string from its name.
+- `collectionMaxSizes(string $collectionName): array` : Get registered collection max width and max height from its name.
+- `getCollection(string $collectionName): ?MediaCollection` : Get a media collection object from its name.
+- `getConversions(string $collectionName): array` : Get declared conversions from a media collection name.
+- `mayContainsImages(MediaCollection $collection): bool` : Check if the given media collection contains images from its declared accepted mime types. It is considered that a collection without declared accepted mime types may contains images.
 
 ## Testing
 

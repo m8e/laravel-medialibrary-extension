@@ -2,14 +2,12 @@
 
 namespace Okipa\MediaLibraryExtension\Tests\Unit\UrlGenerator;
 
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\Models\Media;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithCollectionWithoutConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnly;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithNoSize;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithNoSizeAndNoMimeTypes;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
 class CollectionLegendTest extends TestCase
 {
@@ -18,10 +16,15 @@ class CollectionLegendTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentCollection()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
         $this->expectException(CollectionNotFound::class);
-        $this->expectExceptionMessage('No collection `logo` declared in the Okipa\MediaLibraryExtension\Tests\Support'
-            . '\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection-model');
-        (new TestModelWithGlobalConversionOnlyWithoutCollection)->constraintsLegend('logo');
+        $testModel->constraintsLegend('logo');
     }
 
     /**
@@ -29,10 +32,15 @@ class CollectionLegendTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentConversions()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+        };
         $this->expectException(ConversionsNotFound::class);
-        $this->expectExceptionMessage('No conversion declared in the Okipa\MedialibraryExtension\Tests'
-            . '\Support\TestModels\TestModelWithCollectionWithoutConversions-model');
-        (new TestModelWithCollectionWithoutConversions)->constraintsLegend('logo');
+        $testModel->constraintsLegend('logo');
     }
 
     /**
@@ -40,8 +48,19 @@ class CollectionLegendTest extends TestCase
      */
     public function itReturnsNoLegendWhenNoConstraintIsDeclared()
     {
-        $legendString = (new TestModelWithGlobalConversionWithNoSizeAndNoMimeTypes)
-            ->constraintsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo');
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $legendString = $testModel->constraintsLegend('logo');
         $this->assertEquals('', $legendString);
     }
 
@@ -50,7 +69,19 @@ class CollectionLegendTest extends TestCase
      */
     public function itReturnsOnlyDimensionLegendWhenOnlyDimensionsDeclared()
     {
-        $legendString = (new TestModelWithGlobalConversionOnly)->constraintsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo');
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
+        $legendString = $testModel->constraintsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.dimensions.both', [
             'width'  => 60,
             'height' => 20,
@@ -62,7 +93,19 @@ class CollectionLegendTest extends TestCase
      */
     public function itReturnsOnlyMimeTypesLegendWhenOnlyMimeTypesDeclared()
     {
-        $legendString = (new TestModelWithGlobalConversionWithNoSize)->constraintsLegend('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $legendString = $testModel->constraintsLegend('logo');
         $this->assertEquals(__('medialibrary::medialibrary.constraint.mimeTypes', [
             'mimetypes' => 'image/jpeg, image/png',
         ]), $legendString);

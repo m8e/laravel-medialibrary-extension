@@ -2,17 +2,13 @@
 
 namespace Okipa\MediaLibraryExtension\Tests\Unit\UrlGenerator;
 
+use Spatie\MediaLibrary\File;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\Models\Media;
+use Okipa\MediaLibraryExtension\Tests\TestCase;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithCollectionConversionsOnly;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithCollectionWithoutConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalAndCollectionConversions;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnly;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithNoSize;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithOnlyHeight;
-use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModelWithGlobalConversionWithOnlyWidth;
-use Okipa\MediaLibraryExtension\Tests\TestCase;
+use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 
 class CollectionMaxSizeTest extends TestCase
 {
@@ -21,10 +17,15 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentCollection()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
         $this->expectException(CollectionNotFound::class);
-        $this->expectExceptionMessage('No collection `logo` declared in the Okipa\MediaLibraryExtension\Tests\Support'
-            . '\TestModels\TestModelWithGlobalConversionOnlyWithoutCollection-model');
-        (new testModelWithGlobalConversionOnlyWithoutCollection)->collectionMaxSizes('logo');
+        $testModel->collectionMaxSizes('logo');
     }
 
     /**
@@ -32,10 +33,15 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itThrowsExceptionWhenItIsCalledWithNonExistentConversions()
     {
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+        };
         $this->expectException(ConversionsNotFound::class);
-        $this->expectExceptionMessage('No conversion declared in the Okipa\MedialibraryExtension\Tests\Support'
-            . '\TestModels\TestModelWithCollectionWithoutConversions-model');
-        (new TestModelWithCollectionWithoutConversions)->collectionMaxSizes('logo');
+        $testModel->collectionMaxSizes('logo');
     }
 
     /**
@@ -43,7 +49,19 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsGlobalConversionMaxSizesWhenNoCollectionConversionsDeclared()
     {
-        $maxSizes = (new TestModelWithGlobalConversionOnly)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo');
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 60, 20);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertEquals(60, $maxSizes['width']);
         $this->assertEquals(20, $maxSizes['height']);
     }
@@ -53,7 +71,19 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsOnlyWidthWhenOnlyWidthIsDeclared()
     {
-        $maxSizes = (new TestModelWithGlobalConversionWithOnlyWidth)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->width(120);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertEquals(120, $maxSizes['width']);
         $this->assertNull($maxSizes['height']);
     }
@@ -63,7 +93,19 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsOnlyHeightWhenOnlyHeightIsDeclared()
     {
-        $maxSizes = (new TestModelWithGlobalConversionWithOnlyHeight)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->height(30);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertNull($maxSizes['width']);
         $this->assertEquals(30, $maxSizes['height']);
     }
@@ -73,7 +115,19 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsNoSizeWhenNoneIsDeclared()
     {
-        $maxSizes = (new TestModelWithGlobalConversionWithNoSize)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')->acceptsMimeTypes(['image/jpeg', 'image/png']);
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb');
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertNull($maxSizes['width']);
         $this->assertNull($maxSizes['height']);
     }
@@ -83,7 +137,26 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsCollectionConversionsMaxSizesWhenNoGlobalConversionsDeclared()
     {
-        $maxSizes = (new TestModelWithCollectionConversionsOnly)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')
+                    ->acceptsMimeTypes(['image/jpeg', 'image/png'])
+                    ->registerMediaConversions(function (Media $media = null) {
+                        $this->addMediaConversion('admin-panel')
+                            ->crop(Manipulations::CROP_CENTER, 100, 140);
+                        $this->addMediaConversion('mail')
+                            ->crop(Manipulations::CROP_CENTER, 120, 100);
+                    });
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 40, 40);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertEquals(120, $maxSizes['width']);
         $this->assertEquals(140, $maxSizes['height']);
     }
@@ -93,7 +166,27 @@ class CollectionMaxSizeTest extends TestCase
      */
     public function itReturnsGlobalAndCollectionConversionsMaxSizesWhenBothAreDeclared()
     {
-        $maxSizes = (new TestModelWithGlobalAndCollectionConversions)->collectionMaxSizes('logo');
+        $testModel = new class extends TestModel
+        {
+            public function registerMediaCollections()
+            {
+                $this->addMediaCollection('logo')
+                    ->acceptsFile(function (File $file) {
+                        return true;
+                    })
+                    ->acceptsMimeTypes(['image/jpeg', 'image/png'])
+                    ->registerMediaConversions(function (Media $media = null) {
+                        $this->addMediaConversion('admin-panel')
+                            ->crop(Manipulations::CROP_CENTER, 20, 80);
+                    });
+            }
+
+            public function registerMediaConversions(Media $media = null)
+            {
+                $this->addMediaConversion('thumb')->crop(Manipulations::CROP_CENTER, 100, 70);
+            }
+        };
+        $maxSizes = $testModel->collectionMaxSizes('logo');
         $this->assertEquals(100, $maxSizes['width']);
         $this->assertEquals(80, $maxSizes['height']);
     }

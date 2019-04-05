@@ -2,17 +2,17 @@
 
 namespace Okipa\MediaLibraryExtension\HasMedia;
 
-use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
-use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
-use Okipa\MediaLibraryExtension\FileAdder\FileAdder;
-use Okipa\MediaLibraryExtension\FileAdder\FileAdderFactory;
-use Okipa\MediaLibraryExtension\MediaCollection\MediaCollection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spatie\MediaLibrary\Conversion\Conversion;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\InvalidBase64Data;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\UnreachableUrl;
 use Spatie\MediaLibrary\Models\Media;
+use Spatie\MediaLibrary\Conversion\Conversion;
+use Okipa\MediaLibraryExtension\FileAdder\FileAdder;
+use Okipa\MediaLibraryExtension\FileAdder\FileAdderFactory;
+use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
+use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
+use Okipa\MediaLibraryExtension\MediaCollection\MediaCollection;
+use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\UnreachableUrl;
+use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\InvalidBase64Data;
 
 trait HasMediaTrait
 {
@@ -182,7 +182,7 @@ trait HasMediaTrait
     }
 
     /**
-     * Get the dimension validation constraints string for a media collection.
+     * Get a collection dimension validation constraints string from its name name.
      *
      * @param string $collectionName
      *
@@ -193,6 +193,9 @@ trait HasMediaTrait
     public function dimensionValidationConstraints(string $collectionName): string
     {
         $maxSizes = $this->collectionMaxSizes($collectionName);
+        if (empty($maxSizes)) {
+            return '';
+        }
         $width = $maxSizes['width'] ? 'min_width=' . $maxSizes['width'] : '';
         $height = $maxSizes['height'] ? 'min_height=' . $maxSizes['height'] : '';
         $separator = $width && $height ? ',' : '';
@@ -201,7 +204,56 @@ trait HasMediaTrait
     }
 
     /**
-     * Get registered collection max width and max height.
+     * Get a media collection object from its name.
+     *
+     * @param string $collectionName
+     *
+     * @return \Okipa\MediaLibraryExtension\MediaCollection\MediaCollection|null
+     */
+    public function getCollection(string $collectionName): ?MediaCollection
+    {
+        $collection = Arr::where($this->mediaCollections, function ($collection) use ($collectionName) {
+            return $collection->name === $collectionName;
+        });
+
+        return $collection ? head($collection) : null;
+    }
+
+    /**
+     * Get declared conversions from a media collection name.
+     *
+     * @param string $collectionName
+     *
+     * @return array
+     */
+    public function getConversions(string $collectionName): array
+    {
+        return Arr::where($this->mediaConversions, function ($conversion) use ($collectionName) {
+            return $conversion->shouldBePerformedOn($collectionName);
+        });
+    }
+
+    /**
+     * Check if the given media collection contains images from its declared accepted mime types.
+     * It is considered that a collection without declared accepted mime types may contains images.
+     *
+     * @param \Okipa\MediaLibraryExtension\MediaCollection\MediaCollection $collection
+     *
+     * @return bool
+     */
+    public function mayContainsImages(MediaCollection $collection): bool
+    {
+        return ! $collection->acceptsMimeTypes
+            || ! empty(array_filter(
+                $collection->acceptsMimeTypes,
+                function ($mimeTypes) {
+                    return Str::contains($mimeTypes, 'image');
+                }
+            ));
+    }
+
+    /**
+     * Get registered collection max width and max height from its name.
      *
      * @param string $collectionName
      *
@@ -209,18 +261,17 @@ trait HasMediaTrait
      * @throws \Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound
      * @throws \Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound
      */
-    public function collectionMaxSizes(string $collectionName = 'default'): array
+    public function collectionMaxSizes(string $collectionName): array
     {
         $this->registerAllMediaConversions();
-        $collection = Arr::where($this->mediaCollections, function ($collection) use ($collectionName) {
-            return $collection->name === $collectionName;
-        });
+        $collection = $this->getCollection($collectionName);
         if (! $collection) {
             throw CollectionNotFound::notDeclaredInModel($this, $collectionName);
         }
-        $conversions = Arr::where($this->mediaConversions, function ($conversion) use ($collectionName) {
-            return $conversion->shouldBePerformedOn($collectionName);
-        });
+        if (! $this->mayContainsImages($collection)) {
+            return [];
+        }
+        $conversions = $this->getConversions($collectionName);
         if (empty($conversions)) {
             throw ConversionsNotFound::noneDeclaredInModel($this);
         }
@@ -252,7 +303,7 @@ trait HasMediaTrait
     }
 
     /**
-     * Get the mime types constraints validation string for a media collection.
+     * Get a collection mime types constraints validation string from its name.
      *
      * @param string $collectionName
      *
@@ -287,15 +338,15 @@ trait HasMediaTrait
      */
     public function constraintsLegend(string $collectionName): string
     {
-        $dimensionsLegend = $this->collectionDimensionsLegend($collectionName);
-        $mimeTypesLegend = $this->collectionMimeTypesLegend($collectionName);
+        $dimensionsLegend = $this->dimensionsLegend($collectionName);
+        $mimeTypesLegend = $this->mimeTypesLegend($collectionName);
         $separator = $dimensionsLegend && $mimeTypesLegend ? ' ' : '';
 
         return ($dimensionsLegend ? $dimensionsLegend . $separator : '') . $mimeTypesLegend;
     }
 
     /**
-     * Get the dimensions constraints legend string for a media collection.
+     * Get a collection dimensions constraints legend string from its name.
      *
      * @param string $collectionName
      *
@@ -303,7 +354,7 @@ trait HasMediaTrait
      * @throws \Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound
      * @throws \Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound
      */
-    public function collectionDimensionsLegend(string $collectionName): string
+    public function dimensionsLegend(string $collectionName): string
     {
         $sizes = $this->collectionMaxSizes($collectionName);
         $width = Arr::get($sizes, 'width');
@@ -328,14 +379,14 @@ trait HasMediaTrait
     }
 
     /**
-     * Get the mime types constraints legend string for a media collection.
+     * Get a collection mime types constraints legend string from its name.
      *
      * @param string $collectionName
      *
      * @return string
      * @throws \Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound
      */
-    public function collectionMimeTypesLegend(string $collectionName): string
+    public function mimeTypesLegend(string $collectionName): string
     {
         $this->registerMediaCollections();
         $collection = head(Arr::where($this->mediaCollections, function ($collection) use ($collectionName) {
