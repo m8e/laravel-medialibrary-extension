@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Okipa\\MediaLibraryExtension\\": "src"
+            "Okipa\\MediaLibraryExtension\\": "src/"
         }
     },
     "autoload-dev": {
