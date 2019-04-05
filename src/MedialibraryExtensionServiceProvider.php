@@ -15,6 +15,7 @@ class MediaLibraryExtensionServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/lang' => resource_path('lang'),
         ], 'translations');
+        $this->app->register(\Spatie\MediaLibrary\MediaLibraryServiceProvider::class);
     }
 
     /**
