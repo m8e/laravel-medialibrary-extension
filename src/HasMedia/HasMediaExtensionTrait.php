@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound;
 use Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound;
 use Okipa\MediaLibraryExtension\MediaCollection\MediaCollection;
+use Spatie\MediaLibrary\Models\Media;
 
 trait HasMediaExtensionTrait
 {
@@ -84,6 +85,11 @@ trait HasMediaExtensionTrait
 
         return $this->getMaxWidthAndMaxHeight($sizes);
     }
+
+    /**
+     * @param \Spatie\MediaLibrary\Models\Media|null $media
+     */
+    public abstract function registerAllMediaConversions(Media $media = null);
 
     /**
      * Get a media collection object from its name.
@@ -173,6 +179,8 @@ trait HasMediaExtensionTrait
 
         return $validationString;
     }
+
+    public abstract function registerMediaCollections();
 
     /**
      * Get the constraints legend string for a media collection.
