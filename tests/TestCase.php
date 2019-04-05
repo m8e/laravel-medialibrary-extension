@@ -4,7 +4,6 @@ namespace Okipa\MediaLibraryExtension\Tests;
 
 use File;
 use Illuminate\Database\Schema\Blueprint;
-use Okipa\MediaLibraryExtension\MediaLibraryExtensionServiceProvider;
 use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -16,6 +15,26 @@ abstract class TestCase extends Orchestra
     public function getTestJpg()
     {
         return $this->getTestFilesDirectory('test.jpg');
+    }
+
+    /**
+     * @param string $suffix
+     *
+     * @return string
+     */
+    public function getTestFilesDirectory($suffix = '')
+    {
+        return $this->getTempDirectory() . '/testfiles' . ($suffix == '' ? '' : '/' . $suffix);
+    }
+
+    /**
+     * @param string $suffix
+     *
+     * @return string
+     */
+    public function getTempDirectory($suffix = '')
+    {
+        return __DIR__ . '/Support/temp' . ($suffix == '' ? '' : '/' . $suffix);
     }
 
     /**
@@ -73,34 +92,16 @@ abstract class TestCase extends Orchestra
     }
 
     /**
-     * @param string $suffix
+     * Get package providers.
      *
-     * @return string
-     */
-    public function getTestFilesDirectory($suffix = '')
-    {
-        return $this->getTempDirectory() . '/testfiles' . ($suffix == '' ? '' : '/' . $suffix);
-    }
-
-    /**
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function getTempDirectory($suffix = '')
-    {
-        return __DIR__ . '/Support/temp' . ($suffix == '' ? '' : '/' . $suffix);
-    }
-
-    /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param  \Illuminate\Foundation\Application $app
      *
      * @return array
      */
     protected function getPackageProviders($app)
     {
         return [
-            MediaLibraryExtensionServiceProvider::class,
+            '\Okipa\MediaLibraryExtension\MediaLibraryExtensionServiceProvider',
         ];
     }
 
