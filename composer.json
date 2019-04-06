@@ -54,7 +54,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "\\Okipa\\MediaLibraryExtension\\MediaLibraryExtensionServiceProvider"
+                "Okipa\\MediaLibraryExtension\\MediaLibraryExtensionServiceProvider"
             ]
         }
     },
