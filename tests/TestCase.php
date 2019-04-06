@@ -4,6 +4,7 @@ namespace Okipa\MediaLibraryExtension\Tests;
 
 use File;
 use Illuminate\Database\Schema\Blueprint;
+use Okipa\MediaLibraryExtension\MediaLibraryExtensionServiceProvider;
 use Okipa\MediaLibraryExtension\Tests\Support\TestModels\TestModel;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -101,7 +102,7 @@ abstract class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            '\Okipa\MediaLibraryExtension\MediaLibraryExtensionServiceProvider',
+            MediaLibraryExtensionServiceProvider::class,
         ];
     }
 
