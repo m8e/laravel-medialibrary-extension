@@ -43,6 +43,8 @@ interface HasMedia extends \Spatie\MediaLibrary\HasMedia\HasMedia
      * @param string $collectionName
      *
      * @return string
+     * @throws \Okipa\MediaLibraryExtension\Exceptions\CollectionNotFound
+     * @throws \Okipa\MediaLibraryExtension\Exceptions\ConversionsNotFound
      */
     public function validationConstraints(string $collectionName): string;
 
