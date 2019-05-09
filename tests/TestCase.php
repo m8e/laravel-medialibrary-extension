@@ -69,7 +69,7 @@ abstract class TestCase extends Orchestra
         });
         TestModel::create(['name' => 'test']);
         include_once __DIR__ . '/../vendor/spatie/laravel-medialibrary/database/migrations/create_media_table.php.stub';
-        (new \CreateMediaTable())->up();
+        (new \CreateMediaTable)->up();
     }
 
     /**
@@ -95,11 +95,9 @@ abstract class TestCase extends Orchestra
     /**
      * Get package providers.
      *
-     * @param  \Illuminate\Foundation\Application $app
-     *
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders()
     {
         return [
             MediaLibraryExtensionServiceProvider::class,

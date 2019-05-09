@@ -24,9 +24,9 @@ This package follows the `spatie/laravel-medialibrary` versioning scheme.
 
 ## Extra features
 
-- [Collection mime types constraint setup](#collecton-mime-types-constraint-setup)
-- [Collection validation constraints generation](#collection-validation-constraints-generation)
-- [Collection input legend generation](#collection-input-legend-generation)
+- [Collection mime types constraint setup](#collection-mime-types-constraint-setup)
+- [Collection validation constraints rules generation](#collection-validation-constraints-rules-generation)
+- [Collection validation constraints legend generation](#collection-validation-constraints-legend-generation)
 - [Useful extra public methods](#useful-extra-public-methods)
 
 #### Collection mime types constraint setup
@@ -42,7 +42,7 @@ public function registerMediaCollections()
 }
 ```
 
-#### Collection validation constraints generation
+#### Collection validation constraints rules generation
 Addition of the `validationConstraints(string $collectionName): string` method, which can be used with a model using the `HasMediaTrait`.  
 ```php
 // in your user storing form request for example
@@ -56,7 +56,7 @@ public function rules()
 ```
 Rendering example : `dimensions:min_width=60,min_height=20|mimetypes:image/jpeg,image/png`.
 
-#### Collection input legend generation
+#### Collection validation constraints legend generation
 Addition of the `constraintsLegend(string $collectionName): string` method, which can be used with a model using the `HasMediaTrait`.
 ```html
 // in your HTML form
