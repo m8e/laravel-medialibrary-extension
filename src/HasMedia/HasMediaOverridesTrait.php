@@ -46,7 +46,7 @@ trait HasMediaOverridesTrait
      *
      * @param string[] $keys
      *
-     * @return \Spatie\MediaLibrary\FileAdder\FileAdder[]
+     * @return \Illuminate\Support\Collection
      */
     public function addMultipleMediaFromRequest(array $keys)
     {
@@ -57,7 +57,7 @@ trait HasMediaOverridesTrait
     /**
      * Add all files from a request.
      *
-     * @return \Spatie\MediaLibrary\FileAdder\FileAdder[]
+     * @return \Illuminate\Support\Collection
      */
     public function addAllMediaFromRequest()
     {
@@ -126,6 +126,7 @@ trait HasMediaOverridesTrait
         $tmpFile = tempnam(sys_get_temp_dir(), 'medialibrary');
         file_put_contents($tmpFile, $binaryData);
         $this->guardAgainstInvalidMimeType($tmpFile, $allowedMimeTypes);
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         $file = app(FileAdderFactory::class)->create($this, $tmpFile);
 
         return $file;
