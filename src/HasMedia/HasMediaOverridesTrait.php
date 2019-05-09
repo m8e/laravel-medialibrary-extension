@@ -16,7 +16,7 @@ trait HasMediaOverridesTrait
     use \Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
     /**
-     * Add a file to the medialibrary.
+     * Add a file to the media library.
      *
      * @param string|\Symfony\Component\HttpFoundation\File\UploadedFile $file
      *

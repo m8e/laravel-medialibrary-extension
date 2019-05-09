@@ -65,6 +65,7 @@ trait HasMediaExtensionTrait
         $this->registerAllMediaConversions();
         $collection = $this->getCollection($collectionName);
         if (! $collection) {
+            /** @var \Illuminate\Database\Eloquent\Model $this */
             throw CollectionNotFound::notDeclaredInModel($this, $collectionName);
         }
         if (! $this->mayContainsImages($collection)) {
@@ -72,6 +73,7 @@ trait HasMediaExtensionTrait
         }
         $conversions = $this->getConversions($collectionName);
         if (empty($conversions)) {
+            /** @var \Illuminate\Database\Eloquent\Model $this */
             throw ConversionsNotFound::noneDeclaredInModel($this);
         }
         $sizes = [];
@@ -117,7 +119,7 @@ trait HasMediaExtensionTrait
      */
     public function mayContainsImages(MediaCollection $collection): bool
     {
-        return ! $collection->acceptsMimeTypes
+        return empty($collection->acceptsMimeTypes)
             || ! empty(array_filter(
                 $collection->acceptsMimeTypes,
                 function ($mimeTypes) {
@@ -170,6 +172,7 @@ trait HasMediaExtensionTrait
             return $collection->name === $collectionName;
         }));
         if (! $collection) {
+            /** @var \Illuminate\Database\Eloquent\Model $this */
             throw CollectionNotFound::notDeclaredInModel($this, $collectionName);
         }
         $validationString = '';
@@ -248,6 +251,7 @@ trait HasMediaExtensionTrait
             return $collection->name === $collectionName;
         }));
         if (! $collection) {
+            /** @var \Illuminate\Database\Eloquent\Model $this */
             throw CollectionNotFound::notDeclaredInModel($this, $collectionName);
         }
         $legendString = '';
