@@ -24,6 +24,7 @@ trait HasMediaOverridesTrait
      */
     public function addMedia($file)
     {
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         return app(FileAdderFactory::class)->create($this, $file);
     }
 
@@ -36,6 +37,7 @@ trait HasMediaOverridesTrait
      */
     public function addMediaFromRequest(string $key)
     {
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         return app(FileAdderFactory::class)->createFromRequest($this, $key);
     }
 
@@ -48,6 +50,7 @@ trait HasMediaOverridesTrait
      */
     public function addMultipleMediaFromRequest(array $keys)
     {
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         return app(FileAdderFactory::class)->createMultipleFromRequest($this, $keys);
     }
 
@@ -58,6 +61,7 @@ trait HasMediaOverridesTrait
      */
     public function addAllMediaFromRequest()
     {
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         return app(FileAdderFactory::class)->createAllFromRequest($this);
     }
 
@@ -87,6 +91,7 @@ trait HasMediaOverridesTrait
             $filename = "{$filename}.{$mediaExtension[1]}";
         }
 
+        /** @var \Illuminate\Database\Eloquent\Model $this */
         return app(FileAdderFactory::class)
             ->create($this, $temporaryFile)
             ->usingName(pathinfo($filename, PATHINFO_FILENAME))

@@ -219,16 +219,16 @@ trait HasMediaExtensionTrait
         $height = Arr::get($sizes, 'height');
         $legend = '';
         if ($width && $height) {
-            $legend = __('medialibrary::medialibrary.constraint.dimensions.both', [
+            $legend = (string) __('medialibrary::medialibrary.constraint.dimensions.both', [
                 'width'  => $width,
                 'height' => $height,
             ]);
         } elseif ($width && ! $height) {
-            $legend = __('medialibrary::medialibrary.constraint.dimensions.width', [
+            $legend = (string) __('medialibrary::medialibrary.constraint.dimensions.width', [
                 'width' => $width,
             ]);
         } elseif (! $width && $height) {
-            $legend = __('medialibrary::medialibrary.constraint.dimensions.height', [
+            $legend = (string) __('medialibrary::medialibrary.constraint.dimensions.height', [
                 'height' => $height,
             ]);
         }
